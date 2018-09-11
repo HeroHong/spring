@@ -1,6 +1,8 @@
 package com.altman.springboot;
 
 import com.altman.config.MyBatisConfig;
+import com.altman.user.domain.User;
+import com.altman.user.repository.mybatisMapper.UserMapper;
 import com.altman.web.HelloController;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.Assert;
+
+import javax.annotation.Resource;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -27,6 +31,9 @@ public class ApplicationTests {
 	@Autowired
 	private MyBatisConfig myBatisConfig;
 
+	@Resource
+	private UserMapper userMapper;
+
 	@Before
 	public void setUp() throws Exception {
 		mvc = MockMvcBuilders.standaloneSetup(new HelloController()).build();
@@ -39,9 +46,12 @@ public class ApplicationTests {
 				.andExpect(content().string(equalTo("hello")));
 	}
 
-	@Test
-	public void getMyBatisConfig () {
-		Assert.isTrue("bbbb".equals(myBatisConfig.getJdbcUrl()));
-	}
 
+	@Test
+	public void testSaveUser () {
+		User u = new User();
+		u.setName("张麻子");
+		u.setPassword("123321");
+		int ret = userMapper.insert(u);
+	}
 }
